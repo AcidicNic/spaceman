@@ -1,4 +1,44 @@
 import random
+import subprocess
+from builtins import len, range
+
+WRONG_GUESS_LIMIT = 7
+
+LETTER_BANK = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+               "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
+# found the art here https://www.asciiart.eu/space
+ASTRONAUT = [ # 1 + (WGL - GL)*2
+"        _..._",
+"      .'     '.      _",#7 -2
+"     /    .-\"\"-\\   _/ \\",
+"   .-|   /:.   |  |   |",#6 -4
+"   |  \\  |:.   /.-'-./",
+"   | .-'-;:__.'    =/",#5 -6
+"   .'=  *=|NASA _.='",
+"  /   _.  |    ;",#4 -8
+" ;-.-'|    \\   |",
+"/   | \\    _\\  _\\",#3 -10
+"\\__/'._;.  ==' ==\\",
+"         \\    \\   |",#2 -12
+"         /    /   /",
+"         /-._/-._/",#1 -14
+"  jgs    \\   `\\  \\",
+"          `-._/._/"#0 gameover -16
+]
+
+ufo = '''
+     ___
+ ___/   \\___
+/   '---'   \\
+'--_______--'
+     / \\
+    /   \\
+    /\\O/\\
+    / | \\
+    // \\\\
+
+'''
 
 
 def load_word():
@@ -68,6 +108,36 @@ def is_guess_in_word(guess, secret_word):
     return False
 
 
+def load_ascii(guesses_left):
+    '''
+
+    :param guesses_left:
+    :return:
+    '''
+    lines_per_guess = len(ASTRONAUT)/WRONG_GUESS_LIMIT
+    if guesses_left > 1:
+        for line in range(len(ASTRONAUT)):
+            if 1 + lines_per_guess * (WRONG_GUESS_LIMIT - guesses_left) >= line:
+                print(ASTRONAUT[line])
+            # else:
+                # print()
+    else:
+        for line in ASTRONAUT:
+            print(line)
+
+
+def update_wordbank(wordbank, letters_guessed):
+    for letter in letters_guessed:
+        wordbank.remove(letter)
+    return wordbank
+
+
+def is_valid_guess(guessed_letter):
+    if len(guessed_letter) == 1 and guessed_letter.isalpha():
+        return True
+    return False
+
+
 def spaceman(secret_word):
     '''
     A function that controls the game of spaceman. Will start spaceman in the command line.
@@ -75,55 +145,48 @@ def spaceman(secret_word):
       secret_word (string): the secret word to guess.
     '''
 
+    letters_guessed = []
+    wordbank = LETTER_BANK
+    guesses_left = WRONG_GUESS_LIMIT
+    playing = True
 
-    #TODO: show the player information about the game according to the project spec
+    # TODO: show the player information about the game according to the project spec
+    print("* ~ * ~ * ~ * ~ * ~ * ~ * ~  SPACEMAN  ~ * ~ * ~ * ~ * ~ * ~ * ~ *")
+    print("~ * ~ * ~ * Guess letters until you complete the word! * ~ * ~ * ~")
+    print("~ * ~ * ~ * ~ * ~ * ~  You only have " + str(WRONG_GUESS_LIMIT) + " tries.  ~ * ~ * ~ * ~ * ~ * ~")
 
-    #TODO: Ask the player to guess one letter per round and check that it is only one letter
+    while playing:
 
-    #TODO: Check if the guessed letter is in the secret or not and give the player feedback
+        # clear the screen and redraw the astronaut guy
+        # subprocess.call('clear', shell=True)
+        # load_ascii(guesses_left)
+        print()
 
-    #TODO: show the guessed word so far
+        #TODO: Ask the player to guess one letter per round and check that it is only one letter
+        while True:
+            guessed_letter = input()
+            if is_valid_guess(guessed_letter):
+                if guessed_letter not in letters_guessed:
+                    letters_guessed.append(guessed_letter)
+                    break
+                else:
+                    print("You already tried this letter! Try again.")
+            else:
+                print("Please enter one letter.")
 
-    #TODO: check if the game has been won or lost
+            #TODO: Check if the guessed letter is in the secret or not and give the player feedback
 
 
+            #TODO: show the guessed word so far
+        print(get_guessed_word(secret_word, letters_guessed))
 
-
+            #TODO: check if the game has been won or lost
+        if is_word_guessed(secret_word, letters_guessed):
+            # "you win!" message goes here
+            print("You win!")
+            playing = False
 
 
 # These function calls that will start the game
-secret_word = load_word()
 spaceman(load_word())
-
-
-
-'''
-https://www.asciiart.eu/space
-     ___
- ___/   \___
-/   '---'   \\
-'--_______--'
-     / \\
-    /   \\
-    /\O/\\
-    / | \\
-    // \\\\
-
-        _..._
-      .'     '.      _
-     /    .-""-\   _/ \\
-   .-|   /:.   |  |   |
-   |  \  |:.   /.-'-./
-   | .-'-;:__.'    =/
-   .'=  *=|NASA _.='
-  /   _.  |    ;
- ;-.-'|    \   |
-/   | \    _\  _\\
-\__/'._;.  ==' ==\\
-         \    \   |
-         /    /   /
-         /-._/-._/
-  jgs    \   `\  \\
-          `-._/._/
-
-'''
+# play_again()
