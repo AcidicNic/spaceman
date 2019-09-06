@@ -9,22 +9,22 @@ LETTER_BANK = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 
 # found the art here https://www.asciiart.eu/space
 ASTRONAUT = [ # 1 + (WGL - GL)*2
-"        _..._",
-"      .'     '.      _",#7 -2
-"     /    .-\"\"-\\   _/ \\",
-"   .-|   /:.   |  |   |",#6 -4
-"   |  \\  |:.   /.-'-./",
-"   | .-'-;:__.'    =/",#5 -6
-"   .'=  *=|NASA _.='",
-"  /   _.  |    ;",#4 -8
-" ;-.-'|    \\   |",
-"/   | \\    _\\  _\\",#3 -10
-"\\__/'._;.  ==' ==\\",
-"         \\    \\   |",#2 -12
-"         /    /   /",
-"         /-._/-._/",#1 -14
-"  jgs    \\   `\\  \\",
-"          `-._/._/"#0 gameover -16
+    "        _..._",
+    "      .'     '.      _",#7 -2
+    "     /    .-\"\"-\\   _/ \\",
+    "   .-|   /:.   |  |   |",#6 -4
+    "   |  \\  |:.   /.-'-./",
+    "   | .-'-;:__.'    =/",#5 -6
+    "   .'=  *=|NASA _.='",
+    "  /   _.  |    ;",#4 -8
+    " ;-.-'|    \\   |",
+    "/   | \\    _\\  _\\",#3 -10
+    "\\__/'._;.  ==' ==\\",
+    "         \\    \\   |",#2 -12
+    "         /    /   /",
+    "         /-._/-._/",#1 -14
+    "  jgs    \\   `\\  \\",
+    "          `-._/._/"#0 gameover -16
 ]
 
 ufo = '''
@@ -76,12 +76,15 @@ def is_word_guessed(secret_word, letters_guessed):
 
 def get_guessed_word(secret_word, letters_guessed):
     '''
-    A function that is used to get a string showing the letters guessed so far in the secret word and underscores for letters that have not been guessed yet.
+    A function that is used to get a string showing the letters guessed so far in the
+    secret word and underscores for letters that have not been guessed yet.
     Args:
         secret_word (string): the random word the user is trying to guess.
         letters_guessed (list of strings): list of letters that have been guessed so far.
     Returns:
-        string: letters and underscores.  For letters in the word that the user has guessed correctly, the string should contain the letter at the correct position.  For letters in the word that the user has not yet guessed, shown an _ (underscore) instead.
+        string: letters and underscores.  For letters in the word that the user has guessed
+        correctly, the string shouldcontain the letter at the correct position.
+        For letters in the word that the user has not yet guessed, shown an _ (underscore) instead.
     '''
 
     output = ""
@@ -114,6 +117,7 @@ def load_ascii(guesses_left):
     :param guesses_left:
     :return:
     '''
+
     lines_per_guess = len(ASTRONAUT)/WRONG_GUESS_LIMIT
     if guesses_left > 1:
         for line in range(len(ASTRONAUT)):
@@ -155,12 +159,14 @@ def spaceman(secret_word):
     print("~ * ~ * ~ * Guess letters until you complete the word! * ~ * ~ * ~")
     print("~ * ~ * ~ * ~ * ~ * ~  You only have " + str(WRONG_GUESS_LIMIT) + " tries.  ~ * ~ * ~ * ~ * ~ * ~")
 
+    print(get_guessed_word(secret_word, letters_guessed))
+
+
     while playing:
 
         # clear the screen and redraw the astronaut guy
         # subprocess.call('clear', shell=True)
-        # load_ascii(guesses_left)
-        print()
+        # load_ascii(guesses_left
 
         #TODO: Ask the player to guess one letter per round and check that it is only one letter
         while True:
@@ -174,13 +180,20 @@ def spaceman(secret_word):
             else:
                 print("Please enter one letter.")
 
-            #TODO: Check if the guessed letter is in the secret or not and give the player feedback
+        #TODO: Check if the guessed letter is in the secret or not and give the player feedback
+        if is_guess_in_word(guessed_letter, secret_word):
+            print("Correct!")
+        else:
+            guesses_left -= 1
+            print("Wrong. Your have " + str(guesses_left) + " tries left")
 
-
-            #TODO: show the guessed word so far
+        #TODO: show the guessed word so far
         print(get_guessed_word(secret_word, letters_guessed))
 
-            #TODO: check if the game has been won or lost
+        #TODO: check if the game has been won or lost
+        if guesses_left == 0:
+            print("You ran out of guesses! Game over.")
+            playing = False
         if is_word_guessed(secret_word, letters_guessed):
             # "you win!" message goes here
             print("You win!")
