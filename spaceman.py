@@ -148,6 +148,8 @@ def spaceman(secret_word):
     '''
 
     letters_guessed = []
+    global WRONG_GUESS_LIMIT
+    WRONG_GUESS_LIMIT = len(secret_word)
     wordbank = LETTER_BANK.copy()
     guesses_left = WRONG_GUESS_LIMIT
     playing = True
@@ -195,6 +197,7 @@ def spaceman(secret_word):
         #TODO: check if the game has been won or lost
         if guesses_left == 0:
             print("You ran out of guesses! Game over.")
+            print("The word was " + secret_word)
             playing = False
         if is_word_guessed(secret_word, letters_guessed):
             print(ufo)
