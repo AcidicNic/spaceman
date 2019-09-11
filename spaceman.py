@@ -1,5 +1,6 @@
 import random
 import subprocess
+import sys
 from builtins import len, range
 
 WRONG_GUESS_LIMIT = 7
@@ -27,8 +28,7 @@ ASTRONAUT = [ # 1 + (WGL - GL)*2
     "          `-._/._/"#0 gameover -16
 ]
 
-ufo = '''
-     ___
+ufo = '''     ___
  ___/   \\___
 /   '---'   \\
 '--_______--'
@@ -37,7 +37,6 @@ ufo = '''
     /\\O/\\
     / | \\
     // \\\\
-
 '''
 
 
@@ -119,21 +118,20 @@ def load_ascii(guesses_left):
     '''
 
     lines_per_guess = len(ASTRONAUT)/WRONG_GUESS_LIMIT
-    if guesses_left > 1:
+    if guesses_left > 0:
         for line in range(len(ASTRONAUT)):
-            if 1 + lines_per_guess * (WRONG_GUESS_LIMIT - guesses_left) >= line:
+            if lines_per_guess * (WRONG_GUESS_LIMIT - guesses_left) >= line:
                 print(ASTRONAUT[line])
-            # else:
-                # print()
     else:
         for line in ASTRONAUT:
             print(line)
 
 
-def update_wordbank(wordbank, letters_guessed):
+def update_wordbank(word_bank, letters_guessed):
     for letter in letters_guessed:
-        wordbank.remove(letter)
-    return wordbank
+        if letter.upper() in word_bank:
+            word_bank.remove(letter.upper())
+    return word_bank
 
 
 def is_valid_guess(guessed_letter):
@@ -150,7 +148,7 @@ def spaceman(secret_word):
     '''
 
     letters_guessed = []
-    wordbank = LETTER_BANK
+    wordbank = LETTER_BANK.copy()
     guesses_left = WRONG_GUESS_LIMIT
     playing = True
 
@@ -170,7 +168,7 @@ def spaceman(secret_word):
 
         #TODO: Ask the player to guess one letter per round and check that it is only one letter
         while True:
-            guessed_letter = input()
+            guessed_letter = input("Guess: ")
             if is_valid_guess(guessed_letter):
                 if guessed_letter not in letters_guessed:
                     letters_guessed.append(guessed_letter)
@@ -180,12 +178,16 @@ def spaceman(secret_word):
             else:
                 print("Please enter one letter.")
 
+        wordbank = update_wordbank(wordbank, letters_guessed)
+
         #TODO: Check if the guessed letter is in the secret or not and give the player feedback
         if is_guess_in_word(guessed_letter, secret_word):
             print("Correct!")
         else:
             guesses_left -= 1
+            load_ascii(guesses_left)
             print("Wrong. Your have " + str(guesses_left) + " tries left")
+            print("Unused letter: " + ', '.join(wordbank))
 
         #TODO: show the guessed word so far
         print(get_guessed_word(secret_word, letters_guessed))
@@ -195,11 +197,22 @@ def spaceman(secret_word):
             print("You ran out of guesses! Game over.")
             playing = False
         if is_word_guessed(secret_word, letters_guessed):
-            # "you win!" message goes here
-            print("You win!")
+            print(ufo)
+            print("   You win!")
             playing = False
+
+    response = input("\n\nWould you like to play again? (y to continue): ")
+    if response.lower() == 'y' or response.lower() == "yes":
+        print("New game starting...")
+    else:
+        print(ufo)
+        print("Goodbye!")
+        sys.exit()
 
 
 # These function calls that will start the game
-spaceman(load_word())
-# play_again()
+while True:
+    playing = spaceman(load_word())
+
+
+#TODO - print wordbank; print astronaut;
