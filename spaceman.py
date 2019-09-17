@@ -3,31 +3,30 @@ import subprocess
 import sys
 from builtins import len, range
 
-WRONG_GUESS_LIMIT = 7
+# WRONG_GUESS_LIMIT = 7
 
 LETTER_BANK = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
 # found the art here https://www.asciiart.eu/space
-ASTRONAUT = [ # 1 + (WGL - GL)*2
+ASTRONAUT = [ # (WGL - GL)*2
     "        _..._",
-    "      .'     '.      _",#7 -2
+    "      .'     '.      _",
     "     /    .-\"\"-\\   _/ \\",
-    "   .-|   /:.   |  |   |",#6 -4
+    "   .-|   /:.   |  |   |",
     "   |  \\  |:.   /.-'-./",
-    "   | .-'-;:__.'    =/",#5 -6
+    "   | .-'-;:__.'    =/",
     "   .'=  *=|NASA _.='",
-    "  /   _.  |    ;",#4 -8
+    "  /   _.  |    ;",
     " ;-.-'|    \\   |",
-    "/   | \\    _\\  _\\",#3 -10
+    "/   | \\    _\\  _\\",
     "\\__/'._;.  ==' ==\\",
-    "         \\    \\   |",#2 -12
+    "         \\    \\   |",
     "         /    /   /",
-    "         /-._/-._/",#1 -14
+    "         /-._/-._/",
     "  jgs    \\   `\\  \\",
-    "          `-._/._/"#0 gameover -16
+    "          `-._/._/"
 ]
-
 ufo = '''     ___
  ___/   \\___
 /   '---'   \\
@@ -111,11 +110,6 @@ def is_guess_in_word(guess, secret_word):
 
 
 def load_ascii(guesses_left):
-    '''
-
-    :param guesses_left:
-    :return:
-    '''
 
     lines_per_guess = len(ASTRONAUT)/WRONG_GUESS_LIMIT
     if guesses_left > 0:
@@ -140,6 +134,23 @@ def is_valid_guess(guessed_letter):
     return False
 
 
+def test_is_valid_guess():
+    assert(is_valid_guess("a")), "is_valid_guess is broken"
+    assert(not is_valid_guess("dfgh")), "is_valid_guess is broken"
+    assert(not is_valid_guess("1")), "is_valid_guess is broken"
+
+
+def test_is_guess_in_word():
+    assert(not is_guess_in_word("a", "test")), "is_guess_in_word broken"
+    assert(is_guess_in_word("e", "test")), "is_guess_in_word broken"
+    assert(not is_guess_in_word("1", "word")), "is_guess_in_word broken"
+
+
+def test_get_guessed_word():
+    assert(get_guessed_word("secret word", ["q", "u", "z", "j"]) == "___________"), "get_guessed_word() not working"
+    assert(get_guessed_word("test", ["f", "t", "s"]) == "t_st"), "get_guessed_word() not working"
+
+
 def spaceman(secret_word):
     '''
     A function that controls the game of spaceman. Will start spaceman in the command line.
@@ -154,21 +165,17 @@ def spaceman(secret_word):
     guesses_left = WRONG_GUESS_LIMIT
     playing = True
 
-    # TODO: show the player information about the game according to the project spec
     print("* ~ * ~ * ~ * ~ * ~ * ~ * ~  SPACEMAN  ~ * ~ * ~ * ~ * ~ * ~ * ~ *")
     print("~ * ~ * ~ * Guess letters until you complete the word! * ~ * ~ * ~")
     print("~ * ~ * ~ * ~ * ~ * ~  You only have " + str(WRONG_GUESS_LIMIT) + " tries.  ~ * ~ * ~ * ~ * ~ * ~")
 
     print(get_guessed_word(secret_word, letters_guessed))
 
-
     while playing:
-
         # clear the screen and redraw the astronaut guy
         # subprocess.call('clear', shell=True)
         # load_ascii(guesses_left
 
-        #TODO: Ask the player to guess one letter per round and check that it is only one letter
         while True:
             guessed_letter = input("Guess: ")
             if is_valid_guess(guessed_letter):
@@ -182,7 +189,6 @@ def spaceman(secret_word):
 
         wordbank = update_wordbank(wordbank, letters_guessed)
 
-        #TODO: Check if the guessed letter is in the secret or not and give the player feedback
         if is_guess_in_word(guessed_letter, secret_word):
             print("Correct!")
         else:
@@ -191,10 +197,8 @@ def spaceman(secret_word):
             print("Wrong. Your have " + str(guesses_left) + " tries left")
             print("Unused letter: " + ', '.join(wordbank))
 
-        #TODO: show the guessed word so far
         print(get_guessed_word(secret_word, letters_guessed))
 
-        #TODO: check if the game has been won or lost
         if guesses_left == 0:
             print("You ran out of guesses! Game over.")
             print("The word was " + secret_word)
@@ -213,9 +217,10 @@ def spaceman(secret_word):
         sys.exit()
 
 
+test_get_guessed_word()
+test_is_guess_in_word()
+test_is_valid_guess()
+
 # These function calls that will start the game
 while True:
-    playing = spaceman(load_word())
-
-
-#TODO - print wordbank; print astronaut;
+    spaceman(load_word())
